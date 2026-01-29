@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMR SAKURA - Gamer Pro System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f2ff;
+            --neon-pink: #ff007a;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #020205;
+            color: white;
+            overflow-x: hidden;
+            margin: 0;
+            padding-bottom: 60px;
+        }
+
+        /* Fondo Futurista Gamer (Grid 3D) */
+        .futuristic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #020205 0%, #050a1a 100%);
+            z-index: -1;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        .grid-floor {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            bottom: -50%;
+            left: -50%;
+            background-image: 
+                linear-gradient(var(--neon-cyan) 1px, transparent 1px),
+                linear-gradient(90deg, var(--neon-cyan) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: center bottom;
+            transform: rotateX(60deg);
+            opacity: 0.15;
+            animation: moveGrid 5s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 50px; }
+        }
+
+        /* Scanner Animado */
+        .neon-scanner {
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 35vh;
+            background: linear-gradient(to bottom, transparent, rgba(0, 242, 255, 0.1), transparent);
+            animation: scan 10s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes scan {
+            0% { top: -100%; }
+            100% { top: 200%; }
+        }
+
+        /* Avatar Pulsante (Latido Neón) */
+        .avatar-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .avatar-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 105%;
+            height: 105%;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            filter: blur(30px);
+            opacity: 0.4;
+            animation: heartbeat 2s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.6; }
+        }
+
+        /* Estilo Cristal */
+        .glass {
+            background: rgba(10, 15, 30, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        /* Botón Neón Principal */
+        .btn-neon {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            z-index: 50;
+            border: none;
+        }
+        .btn-neon:hover {
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.7);
+            transform: translateY(-3px) scale(1.02);
+        }
+        .btn-neon:active {
+            transform: scale(0.95);
+        }
+
+        /* Notificaciones Toast */
+        .toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--neon-cyan);
+            color: black;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 11px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { 
+            from { opacity: 0; transform: translateY(-8px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 10px; }
+
+        @media (min-width: 1024px) {
+            .main-container {
+                display: grid;
+                grid-template-columns: 450px 1fr;
+                gap: 2.5rem;
+                align-items: start;
+            }
+        }
+
+        /* Partículas de impacto */
+        .shockwave-explosion {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 242, 255, 0.5);
+            transform: scale(0);
+            animation: explode 0.6s ease-out;
+            pointer-events: none;
+            width: 20px;
+            height: 20px;
+        }
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(30); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Capas de Fondo -->
+    <div class="futuristic-bg">
+        <div class="grid-floor"></div>
+    </div>
+    <div class="neon-scanner"></div>
+    
+    <div id="toast" class="toast">¡COPIADO CON ÉXITO! 🚀</div>
+
+    <!-- Contenedor Principal -->
+    <div class="relative z-10 min-h-screen w-full flex flex-col items-center p-4 md:p-10">
+        
+        <div class="w-full max-w-6xl main-container">
+            
+            <!-- SECCIÓN IZQUIERDA (Perfil y Estadísticas) -->
+            <div class="flex flex-col gap-6">
+                <!-- Header Stats -->
+                <div class="flex gap-4">
+                    <div class="flex-1 glass p-6 rounded-[30px] text-center border-[#00f2ff]/20">
+                        <div class="text-[10px] opacity-40 tracking-[4px] uppercase font-black mb-1">Squad Activo</div>
+                        <div id="view-count" class="text-4xl font-black text-[#00f2ff] tracking-tighter">0</div>
+                    </div>
+                    <div class="flex-1 glass p-6 rounded-[30px] text-center border-[#00f2ff]/20">
+                        <div class="text-[10px] opacity-40 tracking-[4px] uppercase font-black mb-1">Apoyos Real</div>
+                        <div id="click-count" class="text-4xl font-black text-[#00f2ff] tracking-tighter">0</div>
+                    </div>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="glass rounded-[50px] p-8 md:p-12 text-center border-white/5 relative overflow-hidden">
+                    <!-- Avatar con Latido -->
+                    <div class="avatar-container w-44 h-44 mx-auto mb-8">
+                        <div class="avatar-glow"></div>
+                        <div class="w-full h-full rounded-full border-4 border-[#00f2ff] overflow-hidden shadow-[0_0_50px_rgba(0,242,255,0.3)] relative z-10">
+                            <img src="https://i.ibb.co/MkH478r5/image.jpg" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110" alt="GMR">
+                        </div>
+                    </div>
+
+                    <h1 class="text-4xl md:text-5xl font-black italic mb-3 uppercase tracking-tighter">
+                        GMR <span class="text-[#00f2ff]">SAKURA</span>
+                    </h1>
+                    <p class="text-[11px] tracking-[12px] text-[#00f2ff] font-black mb-10 opacity-60">STREET SYSTEM V6.0</p>
+                    
+                    <button id="ad-button" onclick="handleAdClick(event)" class="btn-neon w-full py-8 rounded-[30px] font-black uppercase text-[12px] tracking-[5px]">
+                        Apoyar Gratis (Ver Anuncio)
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECCIÓN DERECHA (Pagos y Comentarios) -->
+            <div class="flex flex-col gap-6 mt-6 lg:mt-0">
+                
+                <!-- Métodos de Apoyo -->
+                <div class="space-y-4">
+                    <div class="text-center lg:text-left px-4">
+                        <span class="text-[11px] font-black tracking-[8px] text-white/30 uppercase">Métodos de Apoyo</span>
+                    </div>
+                    
+                    <!-- Pago Movil -->
+                    <div onclick="toggleTab(event, 'pm')" class="payment-row glass p-6 rounded-[35px] flex items-center justify-between cursor-pointer border border-transparent hover:border-[#00f2ff]/30">
+                        <div class="flex items-center gap-5 pointer-events-none">
+                            <div class="w-12 h-12 bg-[#E31E24] rounded-2xl flex items-center justify-center font-black text-white text-[12px] shadow-lg">BT</div>
+                            <div class="flex flex-col text-left">
+                                <span class="text-xs font-black uppercase tracking-widest leading-tight">Pago Móvil</span>
+                                <span class="text-[9px] opacity-40 font-bold uppercase">Banco del Tesoro (0163)</span>
+                            </div>
+                        </div>
+                        <span class="text-xl opacity-20">🇻🇪</span>
+                    </div>
+                    <div id="tab-pm" class="tab-content mx-4 space-y-3">
+                        <div onclick="copyText('V-21.191.915')" class="p-5 bg-white/5 border border-white/10 rounded-2xl text-center text-sm font-mono cursor-pointer hover:bg-white/10 transition-colors">
+                            <span class="block text-[10px] opacity-40 mb-1 uppercase tracking-widest">Cédula</span>
+                            V-21.191.915
+                        </div>
+                        <div onclick="copyText('0412 3793832')" class="p-5 bg-white/5 border border-white/10 rounded-2xl text-center text-sm font-mono cursor-pointer hover:bg-white/10 transition-colors">
+                            <span class="block text-[10px] opacity-40 mb-1 uppercase tracking-widest">Teléfono</span>
+                            0412 3793832
+                        </div>
+                    </div>
+
+                    <!-- Binance -->
+                    <div onclick="toggleTab(event, 'bi')" class="payment-row glass p-6 rounded-[35px] flex items-center justify-between cursor-pointer border border-transparent hover:border-[#FCD535]/30">
+                        <div class="flex items-center gap-5 pointer-events-none">
+                            <div class="w-12 h-12 bg-[#FCD535] rounded-2xl flex items-center justify-center shadow-lg">
+                                <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" class="w-7 h-7" alt="B">
+                            </div>
+                            <span class="text-xs font-black uppercase tracking-widest">Binance Pay</span>
+                        </div>
+                        <span class="text-xl opacity-20">⚡</span>
+                    </div>
+                    <div id="tab-bi" class="tab-content mx-4 p-6 bg-white/5 border border-[#FCD535]/30 rounded-2xl text-center text-sm font-mono text-[#FCD535] cursor-pointer" onclick="copyText('aleman.j.fl.studio27@gmail.com')">
+                        aleman.j.fl.studio27@gmail.com
+                        <div class="text-[10px] mt-3 opacity-50 font-black uppercase tracking-[2px]">Copiar ID de Binance</div>
+                    </div>
+
+                    <!-- PayPal -->
+                    <div onclick="toggleTab(event, 'pp')" class="payment-row glass p-6 rounded-[35px] flex items-center justify-between cursor-pointer border border-transparent hover:border-[#4fb0ff]/30">
+                        <div class="flex items-center gap-5 pointer-events-none">
+                            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center overflow-hidden p-2 shadow-lg">
+                                <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" class="w-full h-full object-contain" alt="P">
+                            </div>
+                            <span class="text-xs font-black uppercase tracking-widest">PayPal</span>
+                        </div>
+                        <span class="text-xl opacity-20">🌍</span>
+                    </div>
+                    <div id="tab-pp" class="tab-content mx-4 p-6 bg-white/5 border border-[#003087]/30 rounded-2xl text-center text-sm font-mono text-[#4fb0ff] cursor-pointer" onclick="copyText('aleman.j.vzla@gmail.com')">
+                        aleman.j.vzla@gmail.com
+                        <div class="text-[10px] mt-3 opacity-50 font-black uppercase tracking-[2px]">Copiar Correo PayPal</div>
+                    </div>
+                </div>
+
+                <!-- Muro de Honor -->
+                <div class="glass rounded-[50px] p-8 md:p-10 border-white/5">
+                    <h2 class="text-center font-black tracking-[10px] text-xs mb-8 uppercase italic opacity-40 text-[#00f2ff]">Muro de Honor</h2>
+                    <div class="space-y-4 mb-10">
+                        <input type="text" id="comment-name" placeholder="Tu nombre / Nickname..." class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-[12px] focus:outline-none focus:border-[#00f2ff] transition-all text-white">
+                        <textarea id="comment-text" placeholder="Deja tu mensaje gamer aquí..." class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-[12px] focus:outline-none focus:border-[#00f2ff] h-28 resize-none transition-all text-white"></textarea>
+                        <button onclick="sendComment(event)" id="submit-btn" class="w-full py-5 rounded-2xl glass font-black uppercase text-[11px] tracking-widest hover:border-[#00f2ff] hover:text-[#00f2ff] transition-all">
+                            PUBLICAR MENSAJE
+                        </button>
+                    </div>
+                    <div id="comments-container" class="space-y-5 max-h-[450px] overflow-y-auto pr-3 custom-scrollbar">
+                        <div class="text-center py-10 opacity-20 uppercase text-[10px] font-bold">Iniciando sistema...</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
+        // Configuración Firebase
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'gmr-sakura-v6-pro';
+
+        // Contadores Persistentes
+        let clicks = parseInt(localStorage.getItem('gmr_clicks_pro') || "0");
+        let views = parseInt(localStorage.getItem('gmr_views_pro') || "0");
+        
+        if (!sessionStorage.getItem('session_view')) {
+            views++;
+            localStorage.setItem('gmr_views_pro', views);
+            sessionStorage.setItem('session_view', 'true');
+        }
+        
+        document.getElementById('view-count').innerText = views;
+        document.getElementById('click-count').innerText = clicks;
+
+        // Efectos Visuales al Clic
+        window.triggerImpact = (e) => {
+            const btn = e.currentTarget;
+            const rect = btn.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            const explosion = document.createElement("span");
+            explosion.className = "shockwave-explosion";
+            explosion.style.left = x + "px";
+            explosion.style.top = y + "px";
+            btn.appendChild(explosion);
+
+            setTimeout(() => explosion.remove(), 600);
+        };
+
+        // Botón de Anuncio (Verificado)
+        window.handleAdClick = (e) => {
+            triggerImpact(e);
+            clicks++;
+            localStorage.setItem('gmr_clicks_pro', clicks);
+            document.getElementById('click-count').innerText = clicks;
+            
+            // Enlace de anuncio oficial
+            const adUrl = "https://www.effectivegatecpm.com/b4g7emb7e?key=6ecc92e70221a623f34ddcc5d9f426d9";
+            window.open(adUrl, "_blank");
+        };
+
+        // Tabs de Pago
+        window.toggleTab = (e, tabId) => {
+            triggerImpact(e);
+            const content = document.getElementById('tab-' + tabId);
+            const isActive = content.classList.contains('active');
+            
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.payment-row').forEach(el => {
+                el.classList.remove('border-[#00f2ff]/50');
+                el.style.background = "rgba(10, 15, 30, 0.4)";
+            });
+
+            if (!isActive) {
+                content.classList.add('active');
+                e.currentTarget.classList.add('border-[#00f2ff]/50');
+                e.currentTarget.style.background = "rgba(0, 242, 255, 0.08)";
+            }
+        };
+
+        // Copiar Texto
+        window.copyText = (text) => {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2500);
+        };
+
+        // Muro de Honor Realtime
+        const startHonors = async () => {
+            try {
+                await signInAnonymously(auth);
+                const colPath = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
+                
+                onSnapshot(colPath, (snapshot) => {
+                    const container = document.getElementById('comments-container');
+                    container.innerHTML = '';
+                    
+                    const comments = snapshot.docs
+                        .map(doc => ({ ...doc.data() }))
+                        .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                    if (comments.length === 0) {
+                        container.innerHTML = '<div class="text-center py-10 opacity-20 uppercase text-[9px] font-black tracking-widest">Esperando primer mensaje...</div>';
+                        return;
+                    }
+
+                    comments.forEach(data => {
+                        const div = document.createElement('div');
+                        div.className = "bg-white/[0.02] p-6 rounded-[30px] border-l-4 border-[#00f2ff] hover:bg-white/[0.05] transition-all";
+                        div.innerHTML = `
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-black text-[#00f2ff] upperca
